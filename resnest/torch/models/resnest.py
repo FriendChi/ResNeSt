@@ -10,7 +10,7 @@
 import torch
 from .resnet import ResNet, Bottleneck
 
-__all__ = ['resnest50', 'resnest101', 'resnest200', 'resnest269']
+__all__ = ['resnest14', 'resnest26', 'resnest50', 'resnest101', 'resnest200', 'resnest269']
 from .build import RESNEST_MODELS_REGISTRY
 
 _url_format = 'https://github.com/zhanghang1989/ResNeSt/releases/download/weights_step1/{}-{}.pth'
@@ -30,6 +30,26 @@ def short_hash(name):
 resnest_model_urls = {name: _url_format.format(name, short_hash(name)) for
     name in _model_sha256.keys()
 }
+
+def resnest14(pretrained=False, root='~/.encoding/models', **kwargs):
+    model = ResNet(Bottleneck, [1, 1, 1, 1],
+                   radix=2, groups=1, bottleneck_width=64,
+                   deep_stem=True, stem_width=32, avg_down=True,
+                   avd=True, avd_first=False, **kwargs)
+    if pretrained:
+        model.load_state_dict(torch.hub.load_state_dict_from_url(
+            resnest_model_urls['resnest14'], progress=True, check_hash=True))
+    return model
+
+def resnest26(pretrained=False, root='~/.encoding/models', **kwargs):
+    model = ResNet(Bottleneck, [2, 2, 2, 2],
+                   radix=2, groups=1, bottleneck_width=64,
+                   deep_stem=True, stem_width=32, avg_down=True,
+                   avd=True, avd_first=False, **kwargs)
+    if pretrained:
+        model.load_state_dict(torch.hub.load_state_dict_from_url(
+            resnest_model_urls['resnest26'], progress=True, check_hash=True))
+    return model
 
 @RESNEST_MODELS_REGISTRY.register()
 def resnest50(pretrained=False, root='~/.encoding/models', **kwargs):
